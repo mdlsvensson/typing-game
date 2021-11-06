@@ -46,12 +46,17 @@ startButtonEl.addEventListener('click', event => {
 
     // Get initial words
     fetchWords()
-    .then(data => {
-      let words = data.data;
-      for (let i = 0; i < wordCountEl.value; i++) {
+      .then(data => {
+      
+        //Start timer
+        let wpmStart = new Date();
+        let words = data.data;
+        for (let i = 0; i < wordCountEl.value; i++) {
         
+        // Initial variable declaration for the random word/space
         let random;
 
+        // If index is an even number
         if (i % 2 === 0) {
           // Get random 200 words from fetch data
           random = words[Math.floor(Math.random() * words.length)];
@@ -62,6 +67,7 @@ startButtonEl.addEventListener('click', event => {
           }
         }
 
+        // If index is an odd number insert space
         if (i % 2 != 0) {
           random = ' ';
         }
@@ -78,6 +84,15 @@ startButtonEl.addEventListener('click', event => {
 
         // Push words to active words array
         activeWords.push(random);
+          
+        if (activeWords.length === 0) {
+          let wpmEnd = new Date();
+          let timeDiff = wpmEnd - wpmStart;
+          timeDiff /= 1000;
+          
+          let seconds = Math.round(timeDiff);
+          console.log(seconds + ' seconds.')
+        }   
       }
 
       // Change start button to say "stop"
