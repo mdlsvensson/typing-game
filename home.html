@@ -10,15 +10,26 @@
 </head>
 <body>
   <header>
-    <h1>Typing-game</h1>
+    <h1>typing-game</h1>
     <h2>0.0.1</h2>
-    <p>A pure JavaScript typing game.</p>
+    <p>a pure JavaScript typing game</p>
   </header>
 
   <div class="game-area" id='game-area-js'></div>
 
   <div class="input-area">
     <button id="start-button-js">start</button>
+    <div>
+      <label for="word-count">word count</label>
+      <select name="word-count" id="word-count-js">
+        <option value="50">50</option>
+        <option value="100" selected="true">100</option>
+        <option value="250">250</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+        <option value="2000">2000</option>
+      </select>
+    </div>
   </div>
 
   <script src="./js/main.js"></script>

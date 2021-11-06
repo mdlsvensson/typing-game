@@ -8,6 +8,8 @@ const gameAreaEl = document.getElementById('game-area-js');
 const startButtonEl = document.getElementById('start-button-js');
 // Text input field
 const typeFieldEl = document.getElementById('type-field-js');
+// Word count select box (dropdown)
+const wordCountEl = document.getElementById('word-count-js');
 
 // Game start/stop check
 let gameStarted = false;
@@ -34,6 +36,8 @@ let activeWords = [];
 // Game function
 startButtonEl.addEventListener('click', event => {
 
+  startButtonEl.blur();
+
   // Game started switch
   gameStarted = !gameStarted;
 
@@ -44,9 +48,24 @@ startButtonEl.addEventListener('click', event => {
     fetchWords()
     .then(data => {
       let words = data.data;
-      for (let i = 0; i < 200; i++) {
-        // Get random 200 words from fetch data
-        let random = words[Math.floor(Math.random() * words.length)];
+      for (let i = 0; i < wordCountEl.value; i++) {
+        
+        let random;
+
+        if (i % 2 === 0) {
+          // Get random 200 words from fetch data
+          random = words[Math.floor(Math.random() * words.length)];
+
+          // Reroll if duplicate
+          while (activeWords.includes(random)) {
+            random = words[Math.floor(Math.random() * words.length)];
+          }
+        }
+
+        if (i % 2 != 0) {
+          random = ' ';
+        }
+
         // Create elements
         let newEl = document.createElement('p');
         gameAreaEl.appendChild(newEl);
@@ -54,11 +73,12 @@ startButtonEl.addEventListener('click', event => {
         let newTextNode = document.createTextNode(random);
         newEl.appendChild(newTextNode);
 
+        // Set css class to new elements
+        newEl.classList.add('word');
+
         // Push words to active words array
         activeWords.push(random);
       }
-
-      console.log(activeWords);
 
       // Change start button to say "stop"
       startButtonEl.innerHTML = 'stop';
@@ -81,9 +101,8 @@ document.addEventListener('keydown', event => {
   if (gameStarted === false) return;
 
   // Get the pressed key and the next letter to be typed
-  let pressedKey = event.code.slice(-1).toLowerCase();
+  let pressedKey = event.key.toLowerCase();
   let correctKey = activeWords[0].substring(0, 1);
-  console.log(pressedKey);
 
   // If correct letter is pressed
   if (pressedKey === correctKey) {
