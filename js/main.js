@@ -13,11 +13,15 @@ const wordCountEl = document.getElementById('word-count-js');
 
 // Game start/stop check
 let gameStarted = false;
+// Timer start variable
+let wpmStart;
+// Selected word count
+let wordCount;
 
 // Async fetch function
 async function fetchWords() {
   // Fetch words
-  const response = await fetch('http://myjson.dit.upm.es/api/bins/ci5l');
+  const response = await fetch('https://myjson.dit.upm.es/api/bins/ci5l');
 
   // if Error
   if (!response.ok) {
@@ -33,6 +37,14 @@ async function fetchWords() {
 // Active words to type array
 let activeWords = [];
 
+function stopGame() {
+  // Change stop button to say "start"
+  startButtonEl.innerHTML = 'start';
+  // Reset DOM and array
+  gameAreaEl.innerHTML = '';
+  activeWords = [];
+}
+
 // Game function
 startButtonEl.addEventListener('click', event => {
 
@@ -44,55 +56,49 @@ startButtonEl.addEventListener('click', event => {
   // If game is being started
   if (gameStarted === true) {
 
+    // Set the wordcount
+    wordCount = wordCountEl.value;
+
     // Get initial words
     fetchWords()
       .then(data => {
       
         //Start timer
-        let wpmStart = new Date();
+        wpmStart = new Date();
         let words = data.data;
         for (let i = 0; i < wordCountEl.value; i++) {
         
         // Initial variable declaration for the random word/space
-        let random;
+          let random;
 
-        // If index is an even number
-        if (i % 2 === 0) {
-          // Get random 200 words from fetch data
-          random = words[Math.floor(Math.random() * words.length)];
-
-          // Reroll if duplicate
-          while (activeWords.includes(random)) {
+          // If index is an even number
+          if (i % 2 === 0) {
+            // Get random 200 words from fetch data
             random = words[Math.floor(Math.random() * words.length)];
+
+            // Reroll if duplicate
+            while (activeWords.includes(random)) {
+              random = words[Math.floor(Math.random() * words.length)];
+            }
           }
-        }
 
-        // If index is an odd number insert space
-        if (i % 2 != 0) {
-          random = ' ';
-        }
+          // If index is an odd number insert space
+          if (i % 2 != 0) {
+            random = ' ';
+          }
 
-        // Create elements
-        let newEl = document.createElement('p');
-        gameAreaEl.appendChild(newEl);
-        // Create text node for element
-        let newTextNode = document.createTextNode(random);
-        newEl.appendChild(newTextNode);
+          // Create elements
+          let newEl = document.createElement('p');
+          gameAreaEl.appendChild(newEl);
+          // Create text node for element
+          let newTextNode = document.createTextNode(random);
+          newEl.appendChild(newTextNode);
 
-        // Set css class to new elements
-        newEl.classList.add('word');
+          // Set css class to new elements
+          newEl.classList.add('word');
 
-        // Push words to active words array
-        activeWords.push(random);
-          
-        if (activeWords.length === 0) {
-          let wpmEnd = new Date();
-          let timeDiff = wpmEnd - wpmStart;
-          timeDiff /= 1000;
-          
-          let seconds = Math.round(timeDiff);
-          console.log(seconds + ' seconds.')
-        }   
+          // Push words to active words array
+          activeWords.push(random);   
       }
 
       // Change start button to say "stop"
@@ -102,11 +108,7 @@ startButtonEl.addEventListener('click', event => {
   
   // If game is being stopped
   if (gameStarted === false) {
-    // Change stop button to say "start"
-    startButtonEl.innerHTML = 'start';
-    // Reset DOM and array
-    gameAreaEl.innerHTML = '';
-    activeWords = [];
+    stopGame();
   }
 });
 
@@ -129,6 +131,21 @@ document.addEventListener('keydown', event => {
   if (activeWords[0].length === 0) {
     activeWords.shift();
     gameAreaEl.removeChild(gameAreaEl.firstChild);
+  }
+
+  // When last word is typed
+  if (activeWords.length === 1) {
+    // Stop the timer
+    let wpmEnd = new Date();
+    // Timer calculation
+    let timeDiff = wpmEnd - wpmStart;
+    timeDiff /= 1000;
+    // Get the words per minute
+    let wpmResult = Math.round(wordCount / (timeDiff / 60));
+    // Get the seconds elapsed
+    let seconds = Math.round(timeDiff);
+    // Show result message
+    gameAreaEl.innerHTML = `<p class="word" style="color: green;">${wordCount} words in ${seconds} seconds. ${wpmResult} WPM.</p>`
   }
 
 });
