@@ -11,12 +11,15 @@ const typeFieldEl = document.getElementById('type-field-js');
 // Word count select box (dropdown)
 const wordCountEl = document.getElementById('word-count-js');
 
+// GLOBAL VARIABLES
 // Game start/stop check
 let gameStarted = false;
 // Timer start variable
 let wpmStart;
 // Selected word count
 let wordCount;
+// Active words to type array
+let activeWords = [];
 
 // Async fetch function
 async function fetchWords() {
@@ -33,9 +36,6 @@ async function fetchWords() {
 
   return json;
 }
-
-// Active words to type array
-let activeWords = [];
 
 function stopGame() {
   // Change stop button to say "start"
@@ -63,8 +63,6 @@ startButtonEl.addEventListener('click', event => {
     fetchWords()
       .then(data => {
       
-        //Start timer
-        wpmStart = new Date();
         let words = data.data;
         for (let i = 0; i < wordCountEl.value; i++) {
         
@@ -114,6 +112,12 @@ startButtonEl.addEventListener('click', event => {
 
 // Register Keypresses and update DOM/Array
 document.addEventListener('keydown', event => {
+  // If first letter typed
+  console.log(activeWords.length)
+  if (activeWords.length == wordCount) {
+    //Start timer
+    wpmStart = new Date();
+  }
   // If game is not started, return
   if (gameStarted === false) return;
 
@@ -139,13 +143,11 @@ document.addEventListener('keydown', event => {
     let wpmEnd = new Date();
     // Timer calculation
     let timeDiff = wpmEnd - wpmStart;
-    timeDiff /= 1000;
     // Get the words per minute
-    let wpmResult = Math.round(wordCount / (timeDiff / 60));
+    let wpmResult = Math.round(wordCount / (timeDiff / 60000));
     // Get the seconds elapsed
-    let seconds = Math.round(timeDiff);
+    let seconds = Math.round(timeDiff /= 1000);
     // Show result message
-    gameAreaEl.innerHTML = `<p class="word" style="color: green;">${wordCount} words in ${seconds} seconds. ${wpmResult} WPM.</p>`
+    gameAreaEl.innerHTML = `<p class="word">${wordCount} words in ${seconds} seconds. ${wpmResult} WPM.</p>`
   }
-
 });
