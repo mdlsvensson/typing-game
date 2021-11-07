@@ -21,6 +21,13 @@ let wordCount;
 // Active words to type array
 let activeWords = [];
 
+// Disable spacebar default
+window.addEventListener('keydown', (e) => { 
+  if (e.key === ' ' && e.target === document.body) {  
+    e.preventDefault();
+  }  
+});
+
 // Async fetch function
 async function fetchWords() {
   // Fetch words
@@ -113,7 +120,6 @@ startButtonEl.addEventListener('click', event => {
 // Register Keypresses and update DOM/Array
 document.addEventListener('keydown', event => {
   // If first letter typed
-  console.log(activeWords.length)
   if (activeWords.length == wordCount) {
     //Start timer
     wpmStart = new Date();
