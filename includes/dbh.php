@@ -1,8 +1,7 @@
 <?php
 
-$dbServername = "localhost";
-$dbUsername = "root";
-$dbPassword = "";
-$dbName = "leaderboard";
+  // Connect to mongodb
+  $m = new MongoClient();
 
-$conn = mysqli
+  echo "Connection to database"
+?>
