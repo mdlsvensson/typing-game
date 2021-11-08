@@ -1,2 +1,6 @@
 <?php include_once("home.html"); ?>
-<?php include_once("./includes/dbh.php"); ?>
+<?php
+// Connect to mongodb
+  $m = new MongoClient();
+
+  echo "Connection to database"
